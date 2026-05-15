@@ -16,7 +16,7 @@ date: "2026"
 ---
 
 <!-- Esto sirve para que el logo de FAECO se vea en el html -->
-<div id="logo-header">
+<div id="logoFAECO">
   <img src="https://economia.uanl.mx/wp-content/uploads/2021/07/faeco.png">
 </div>
 
@@ -24,7 +24,7 @@ date: "2026"
 ```{css, echo=FALSE}
 
 /* Colorcar la imagen del logo arriba a la derecha */
-#logo-header {
+#logoFAECO {
   position: absolute;
   top: 25px;
   right: 25px;
@@ -32,7 +32,7 @@ date: "2026"
 }
 
 /* Definir el tamaño del logo */
-#logo-header img {
+#logoFAECO img {
   width: 100px; /* tamaño en pixeles */
   height: auto; /* para que mantenga sus proporciones y no se distorsione */
 }
@@ -61,7 +61,7 @@ library(ggplot2)
 
 *** 
 # **Introducción** 
-Hay que poner elobjetivo general del proyecto aqui
+Hay que poner elobjetivo general del proyecto aqui, que librerias, recursos, étc se utilizaron en el proyecto
 
 ***
 # **Problema 1 (MoveNL)**
@@ -78,59 +78,91 @@ Que se analizara a detalle y que se busca evaluar
 Paso 1. Importar la base de datos de la demanda de MoveNL (formato Data Frame)
 
 <!-- Bloque R para importar la base de datos de MoveNL en formato data frame -->
-```{r Dataframe de MoveNL, results='asis'}
+```{r Importar Matriz DATA FRAME, results='asis'}
 
 # Read.csv importa el archivo .csv desde la carpeta en la que se encuentra el proyecto .Rmd
-MoveNL_df <- read.csv("datos_problema1_PF26.csv", row.names = 1) 
+dataframe <- read.csv("datos_problema1_PF26.csv", row.names = 1) 
 # Row.names le dice a R que la primera columna (1) de cada fila son palabras y no valores numericos
 
 ```
 Paso 2. Convertir la base de datos de formato Data Frame a formato Números (Matriz)
 
 <!-- Bloque R para convertir la base de datos de formato data frame a formatu números -->
-```{r Matriz de MoveNL}
-
+```{r Convertir a Matriz NUMERICA}
 # Como ya usamos row.names = 1 al importar, solo quedan números en las celdas
-MoveNL <- as.matrix(MoveNL_df) # As.matrix es la funcion que convierte la base de datos de formato data frame a formato matriz
+MatrizOriginal <- as.matrix(dataframe) # As.matrix es la funcion que convierte la base de datos de formato data frame a formato matriz
 
 # Renombrar las columnas (Eje X) con los nombres de los planes
-colnames(MoveNL) <- c("Bicicleta pública", "Patinete eléctrico", 
+colnames(MatrizOriginal) <- c("Bicicleta pública", "Patinete eléctrico", 
                       "Autobús BRT", "Metro Express", "Taxi compartido")
+```
 
-# Presentar la matriz (Para verificar que R la reconoce como matriz)
-# Esto mostrará la matriz en el formato estándar de consola de R
-knitr::kable(MoveNL, 
+
+<!-- Bloque R para mostrar la matriz en forma de tabla de datos -->
+```{r Presentar la Matriz Original}
+
+# Esto mostrará la matriz en forma de tabla para mejor comprension
+knitr::kable(MatrizOriginal, 
              caption = "Tabla 1. Matriz de Datos Original de Demanda: MoveNL", # Caption para agregar titulos o descripcones de tablas y figuras 
              align = "cccccc") # align para centrar los valores en sus columans (c = center) y son 6 columnas
 ```
 
 ## 4. **Analisis de Escenarios de Demanda**
 ### _**4.1 Escenario de Disminucion de Demanda**_
+Esta proyección de demanda contempla factores externos de competencia. Debido a la entrada de nuevas empresas al mercado, se ha identificado una probabilidad de reducción del 28% en la demanda general.
 
-
-```{r MoveNL disminuida}
-# Definimos el escalar de reducción (1 - 0.28 = 0.72)
-k <- 0.72
-
-# Multiplicar la matriz MoveNL por k
-MoveNL_disminuida   <- MoveNL * k
-
-# Presentar los resultados de la nueva matriz
-
-knitr::kable(MoveNL_disminuida, 
-             caption = "Tabla 2. Matriz de Demanda ante Escenario de Competencia (-28%)", 
-             align = "ccccc", 
-             digits = 2) # Usamos digits = 2 porque al ser promedios, los decimales son necesarios (en este caso mostramos solo 2)
+Para reflejar este cambio, se genera primero un _**escalar de ajuste**_ que represente el cambio de la demanda:
+```{r Escalar de Disminucion}
+# Definimos el escalar de ajuste
+k_Disminucion <- 0.72
 ```
+
+```{r Algebra de Escalar, echo=FALSE,results='asis'}
+Eqn("\\mathbf{k_{\\text{ Disminucion}}} = 1 - 0.28 = 0.72")
+```
+
+Luego se genera una nueva matriz llamada _**Matriz Disminuida**_ multiplicando la matriz original por el escalar de ajuste:
+```{r Matriz Disminuida, results='asis'}
+# Multiplicar la matriz MoveNL por k
+MatrizDisminuida   <- k_Disminucion * MatrizOriginal
+
+```
+
+```{r Algebra de Matriz Disminuida, echo=FALSE, results='asis'}
+Eqn("\\mathbf{Matriz\\ Disminuida} = k_{\\text{ Disminucion}} \\times \\mathit{Matriz\\ Original}")
+
+Eqn("\\mathbf{Matriz\\ Disminuida} = 0.72 \\times", latexMatrix(unname(MatrizOriginal), matrix = "bmatrix"))
+```
+
+```{r Presentar la Matriz Disminuida, results='asis'}
+# Presentamos la nueva matriz
+Eqn("\\mathbf{Matriz\\ Disminuida} =", latexMatrix(unname(MatrizDisminuida), matrix = "bmatrix"))
+```
+
 #### _**4.2 Escenario de Expansión de MoveNL**_
 
-```{r Produccion de MoviRival}
-# Definir el escalar de adquisición (1/4)
-k_expansion <- 1/4
+```{r Escalar de Expansion}
+# Definir el escalar 
+k_Expansion <- 1/4
+```
 
+```{r Algebra de Escalar de Expansion, results='asis', echo=FALSE}
+Eqn("\\mathbf{k_{\\text{ Expansion}}} = \\frac{1}{4}")
+```
+
+```{r Matriz de Produccion de MoviRival}
 # Calcular la porción adquirida
-Movi_Rival <- MoveNL * k_expansion
+Movi_Rival <- MatrizOriginal * k_Expansion
+```
 
+```{r Algebra Matriz de Produccion de MoviRival, echo=FALSE, results='asis'}
+Eqn("\\mathbf{Matriz\\ Produccion_{\\text{ MoviRival}}} = k_{\\text{ Expansion}} \\times \\mathit{Matriz\\ Original}")
+
+Eqn("\\mathbf{Matriz\\ Produccion_{\\text{ MoviRival}}} = \\frac{1}{4} \\times", latexMatrix(unname(MatrizOriginal), matrix = "bmatrix"))
+```
+
+
+```{r Tabla de Produccion de MoviRival}
 # Presentar la matriz de la adquisición
 knitr::kable(Movi_Rival, 
              caption = "Matriz de Producción de MoviRival", 
@@ -140,59 +172,8 @@ knitr::kable(Movi_Rival,
 
 ```{r MoveNL expandida, include=FALSE}
 # Realizar la suma de matrices
-MoveNL_Total <- MoveNL + Movi_Rival
+MoveNL_Total <- MatrizOriginal + Movi_Rival
 
-```
-
-```{r matriz a LateX, results='asis', include=FALSE}
-matriz_a_latex <- function(matriz, decimales = 1, tipo = "bmatrix") {
-
-  matriz_convertida <- round(matriz, decimales)
-
-  filas <- apply(matriz_convertida, 1, paste, collapse = " & ")
-  cuerpo <- paste(filas, collapse = " \\\\ ")
-
-  paste0(
-    "\\begin{", tipo, "}",
-    cuerpo,
-    "\\end{", tipo, "}"
-  )
-}
-
-```
-
-```{r Funcion para Ecuaciones Matriciales, include=FALSE, results='asis'}
-ecuacion_matricial <- function(..., salto = "10pt") {
-
-  elementos <- list(...)
-
-  ecuacion <- paste(elementos, collapse = paste0(" \\\\[", salto, "] "))
-
-  cat(
-    paste0(
-      "$$\n",
-      "\\begin{gather*}\n",
-      ecuacion,
-      "\n\\end{gather*}\n",
-      "$$"
-    )
-  )
-}
-
-```
-
-```{r Representacion Visual Algebraica, results='asis'}
-A <- matriz_a_latex(MoveNL)
-B <- matriz_a_latex(Movi_Rival)
-C <- matriz_a_latex(MoveNL_Total)
-
-ecuacion_matricial(
-  A,
-  "+",
-  B,
-  "=",
-  C
-)
 ```
 
 ```{r Tabla de MoveNL expandida, echo=FALSE}
@@ -238,3 +219,4 @@ Determinante <- det(MoveNL_Total)
 
 
 # **Problema 3: Markov**
+
