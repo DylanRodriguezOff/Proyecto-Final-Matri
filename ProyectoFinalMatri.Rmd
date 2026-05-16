@@ -213,10 +213,50 @@ Determinante <- det(MoveNL_Total)
 
 # **Problema 2: Rendimiento Deportivo**
 
-```{r}
+## 1. **Contexto**
+-Provisional- Análisis del rendimiento deportivo de pilotos de F1 durante una carrera en el Autódromo Hermanos Rodríguez.
 
+## 2. **Objetivo Específico**
+Analizar factores que afectan al rendimiento de los deportistas
+
+## 3. **Preparación de los datos**
+
+Paso 1. Importar la base de datos generada por Gemini. Breve descripción de las características de los datos y de la base
+
+```{r}
+# Importar la base de datos en formato .csv con la función read.csv
+Rendimiento <- read.csv("datos_problema2_PF26.csv")
+
+# Confirmamos que la base de datos se haya importado correctamente
+nrow(Rendimiento)
+ncol(Rendimiento)
+sum(is.na(Rendimiento))
+head(Rendimiento)
 ```
 
+## 4. **Definición de Variables**
+Definir porque las variables que escogimos son consideradas para el modelo de regresión lineal y su relación con el rendimiento (aquí va la tablita con las variables)
 
-# **Problema 3: Markov**
+## 5. Modelo de Regresión Lineal
 
+Paso 1. Previamente definidas las variables, podremos crear el modelo de regresión lineal.
+ 
+```{r}
+# Para generar el Modelo de Regresión Lineal utilizamos la función lm() especificando las variables que analizaremos.
+modelolm <- lm(rendimiento_competencia ~ experiencia + entrenamiento + peso_monoplaza + degradacion_neumaticos, Rendimiento)
+
+# La función summary() nos será úlil para observar los resultados del modelo
+summary(modelolm)
+```
+
+Paso 2. Definir los coeficientes que determinan las relaciones.
+
+```{r}
+coeficientes <- coef(modelolm)
+
+print(coeficientes)
+```
+## 6. **Ecuación del modelo**
+
+$$Rendimiento = -22.0238 - 0.436X1 + 1.599X2 + 0.088X3 - 0.420X4$$
+Aquí va lo que esperamos que ahorita te lo paso
