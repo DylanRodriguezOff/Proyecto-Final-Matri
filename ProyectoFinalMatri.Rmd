@@ -326,10 +326,12 @@ XUnidades_Fracciones
 # **Problema 2: Rendimiento Deportivo**
 
 ## 1. **Contexto**
--Provisional- Análisis del rendimiento deportivo de pilotos de F1 durante una carrera en el Autódromo Hermanos Rodríguez.
+
+Se busca analizar la relación de factores que afectan al rendimiento de los pilotos en la Fórmula 1, durante la carrera GNP en el Autodómo Hermanos Rodríguez, en la CDMX, contemplando factores climáticos y dificultad del circuito.
 
 ## 2. **Objetivo Específico**
-Analizar factores que afectan al rendimiento de los deportistas
+
+Comprender la relación de cada uno de los factores tales que entrenamiento, experiencia, entre otros; factores que potencien o disminuyan el rendimiento de los pilotos durante la competencia. 
 
 ## 3. **Preparación de los datos**
 
@@ -357,7 +359,7 @@ Paso 1. Previamente definidas las variables, podremos crear el modelo de regresi
 # Para generar el Modelo de Regresión Lineal utilizamos la función lm() especificando las variables que analizaremos.
 modelolm <- lm(rendimiento_competencia ~ experiencia + entrenamiento + peso_monoplaza + degradacion_neumaticos, Rendimiento)
 
-# La función summary() nos será úlil para observar los resultados del modelo
+# La función summary() nos será útil para observar los resultados del modelo
 summary(modelolm)
 ```
 
@@ -368,10 +370,53 @@ coeficientes <- coef(modelolm)
 
 print(coeficientes)
 ```
+
 ## 6. **Ecuación del modelo**
 
 $$Rendimiento = -22.0238 - 0.436X1 + 1.599X2 + 0.088X3 - 0.420X4$$
 Aquí va lo que esperamos que ahorita te lo paso
+
+## 7. Análisis y gráficas de las variables
+
+### _**7.1.- Gráfica: Rendimiento por degradación de neumáticos**_ ### 
+
+Consideramos que la variable de mayor importancia para el rendimiento de los pilotos dentro de la competencia es la degradación de los neumáticos, y en general, aquellas variables relacionadas con el vehículo. La degradación de los neumáticos es fundamental para el monoplaza y el piloto ya que una alta degradación imposibilita al piloto a manejar de una forma óptima y que pueda utilizar todos sus recursos técnicos, habilidades y destreza motriz.
+
+
+```{r}
+# Gráfica degradación-rendimiento_competencia
+ggplot(Rendimiento, aes(x=degradacion_neumaticos, y=rendimiento_competencia)) +
+  # Para los puntos: puntos azules, con cierta transparencia
+  geom_point(color="#2c3e50", alpha = 0.6, size = 2.5) +
+ # Para la línea de regresión: color oscuro
+  geom_smooth(method = "lm", color = "#e74c3c", se = FALSE, size = 1.2 ) +
+ # Para las etiquetas de la gráfica
+  labs( 
+    title = "Relación Lineal: Degradación de Neúmaticos - Rendimiento", 
+    subtitle = "Análisis de variables basado en carrera GNP.",
+    x = "Degradación de neumáticos (porcentaje)",
+    y = "Puntaje de Rendimiento",
+    caption = "Fuente: Base de datos generada por Gemini")
+  
+```
+
+### _**7.2.- Gráfica: Rendimiento por entrenamiento semanal**_ ###
+```{r}
+# Gráfica entrenamiento-rendimiento_competencia
+ggplot(Rendimiento, aes(x=entrenamiento, y=rendimiento_competencia)) +
+  # Para los puntos: puntos azules, con cierta transparencia
+  geom_point(color="#2c3e50", alpha = 0.6, size = 2.5) +
+ # Para la línea de regresión: color oscuro
+  geom_smooth(method = "lm", color = "#e74c3c", se = FALSE, size = 1.2 ) +
+ # Para las etiquetas de la gráfica
+  labs( 
+    title = "Relación Lineal: Entrenamiento semanal - Rendimiento", 
+    subtitle = "Análisis de variables basado en carrera GNP.",
+    x = "Entrenamiento semanal (Horas por semana de entrenamiento)",
+    y = "Puntaje de Rendimiento",
+    caption = "Fuente: Base de datos generada por Gemini")
+```
+
 
 
 # **Problema 3: Markov**
