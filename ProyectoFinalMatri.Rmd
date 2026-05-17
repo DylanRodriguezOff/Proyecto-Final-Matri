@@ -52,6 +52,7 @@ knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
 
 library(matlib)
 library(ggplot2)
+library(MASS)
 ```
 
 <!-- Las lineas de division de secciones usan los astericos (***) -->
@@ -64,7 +65,7 @@ library(ggplot2)
 Hay que poner elobjetivo general del proyecto aqui, que librerias, recursos, étc se utilizaron en el proyecto
 
 ***
-# **Problema 1 (MoveNL)**
+# **Problema 1: MoveNL**
 
 <!-- Palabras despues de dos o más almohadillas (#) tendran formato de sub-header (h2) o posterior (h3, h4, ...) -->
 ## 1. **Contexto**
@@ -81,20 +82,29 @@ Paso 1. Importar la base de datos de la demanda de MoveNL (formato Data Frame)
 ```{r Importar Matriz DATA FRAME, results='asis'}
 
 # Read.csv importa el archivo .csv desde la carpeta en la que se encuentra el proyecto .Rmd
-dataframe <- read.csv("datos_problema1_PF26.csv", row.names = 1) 
-# Row.names le dice a R que la primera columna (1) de cada fila son palabras y no valores numericos
+dataframe <- read.csv("datos_problema1_PF26.csv") 
 
 ```
 Paso 2. Convertir la base de datos de formato Data Frame a formato Números (Matriz)
 
 <!-- Bloque R para convertir la base de datos de formato data frame a formatu números -->
 ```{r Convertir a Matriz NUMERICA}
-# Como ya usamos row.names = 1 al importar, solo quedan números en las celdas
-MatrizOriginal <- as.matrix(dataframe) # As.matrix es la funcion que convierte la base de datos de formato data frame a formato matriz
+
+# Definimos que la primera columna del archivo son los nombres de los municipios [fila, columna]
+nombres_municipios <- dataframe[, 1]
+
+# 
+MatrizOriginal <- as.matrix(sapply(dataframe[, 2:6], as.numeric)) # As.matrix es la funcion que convierte la base de datos de formato data frame a formato matriz
+#as.numeric define que de la columna 2 a 6 son numeros
 
 # Renombrar las columnas (Eje X) con los nombres de los planes
-colnames(MatrizOriginal) <- c("Bicicleta pública", "Patinete eléctrico", 
-                      "Autobús BRT", "Metro Express", "Taxi compartido")
+# Renombrar los nombres de las filas como los nombres de los municipios
+rownames(MatrizOriginal) <- nombres_municipios
+nombres_planes <- c("Bicicleta pública", "Patinete eléctrico", 
+                    "Autobús BRT", "Metro Express", "Taxi compartido")
+colnames(MatrizOriginal) <- nombres_planes
+
+print(MatrizOriginal)
 ```
 
 
@@ -134,7 +144,7 @@ Eqn("\\mathbf{Matriz\\ Disminuida} = k_{\\text{ Disminucion}} \\times \\mathit{M
 Eqn("\\mathbf{Matriz\\ Disminuida} = 0.72 \\times", latexMatrix(unname(MatrizOriginal), matrix = "bmatrix"))
 ```
 
-```{r Presentar la Matriz Disminuida, results='asis'}
+```{r Presentar la Matriz Disminuida, results='asis', echo=FALSE}
 # Presentamos la nueva matriz
 Eqn("\\mathbf{Matriz\\ Disminuida} =", latexMatrix(unname(MatrizDisminuida), matrix = "bmatrix"))
 ```
@@ -152,7 +162,7 @@ Eqn("\\mathbf{k_{\\text{ Expansion}}} = \\frac{1}{4}")
 
 ```{r Matriz de Produccion de MoviRival}
 # Calcular la porción adquirida
-Movi_Rival <- MatrizOriginal * k_Expansion
+Movi_Rival <- k_Expansion * MatrizOriginal
 ```
 
 ```{r Algebra Matriz de Produccion de MoviRival, echo=FALSE, results='asis'}
@@ -162,18 +172,23 @@ Eqn("\\mathbf{Matriz\\ Produccion_{\\text{ MoviRival}}} = \\frac{1}{4} \\times",
 ```
 
 
-```{r Tabla de Produccion de MoviRival}
+```{r Matriz de Produccion de MoviRival Algebra, echo=FALSE, results='asis'}
+
 # Presentar la matriz de la adquisición
-knitr::kable(Movi_Rival, 
-             caption = "Matriz de Producción de MoviRival", 
-             align = "c", 
-             digits = 2)
+Eqn("\\mathbf{Matriz\\ Produccion_{\\text{ MoviRival}}} = ", latexMatrix(unname(Movi_Rival), matrix = "bmatrix"))
 ```
+
+Para calcular la nueva matriz de produccion de la empresa MoveNL, debemos sumar la matriz Original más la matriz de produccion de la empresa rival MoviRival
 
 ```{r MoveNL expandida, include=FALSE}
 # Realizar la suma de matrices
 MoveNL_Total <- MatrizOriginal + Movi_Rival
+```
 
+```{r, echo=FALSE, results='asis'}
+Eqn("\\mathbf{Matriz\\ Expandida} = ", latexMatrix(unname(MatrizOriginal), matrix = "bmatrix"), "+", latexMatrix(unname(Movi_Rival), matrix = "bmatrix"))
+
+Eqn("\\mathbf{Matriz\\ Expandida} = ", latexMatrix(unname(MoveNL_Total), matrix = "bmatrix"))
 ```
 
 ```{r Tabla de MoveNL expandida, echo=FALSE}
@@ -183,33 +198,130 @@ knitr::kable(MoveNL_Total,
              align = "c", 
              digits = 2)
 ```
+#### _**4.3 Propiedades de Matrices**_
+
+A partir de la matriz de Produccion despues de expandirse, se calcula las diferentes propiedades de esta nueva matriz.
+
+```{r, results='asis'}
+det(MoveNL_Total)
+```
+
+```{r, echo=FALSE, results='asis'}
+Eqn("\\mathbf{Determinante(Matriz\\ de\\ Adquision)} = ", det(MoveNL_Total))
+```
+
 
 ```{r Matriz Traspuesta}
 MoveNL_trasponida <- t(MoveNL_Total)
 
-knitr::kable(MoveNL_trasponida, 
-             caption = "Matriz Transpuesta de MoveNL", 
-             align = "c", 
-             digits = 2)
+MoveNL_trasponida
 ```
 
 ```{r}
 MoveNL_Inversa <- solve(MoveNL_Total)
 
-knitr::kable(MoveNL_Inversa, 
-             caption = "Matriz Inversa de MoveNL", 
-             align = "c", 
-             digits = 5)
+MoveNL_Inversa_Redondeada <- fractions(MoveNL_Inversa, digits = 4)
+
+
+MoveNL_Inversa_Redondeada
 ```
+
+#### _**4.4 Utilidad**_
+
 ```{r}
 
+# Crear el vector columna de precios (Variables para cada precio)
+Bicicleta_MXN <- 50
+Patinete_MXN <- 2 * Bicicleta_MXN
+Autobus_MXN <- 3 * Bicicleta_MXN
+Metro_MXN <- Autobus_MXN + 30
+Taxi_MXN <- Metro_MXN - (1/2)*Patinete_MXN
+
+VectorPrecios <- matrix(c(Bicicleta_MXN, 
+                          Patinete_MXN, 
+                          Autobus_MXN, 
+                          Metro_MXN, 
+                          Taxi_MXN), 
+                        nrow = 5, ncol = 1,
+                        dimnames = list(nombres_planes, "Precio ($)"))
+
+VectorPrecios
 ```
 
 
-```{r determinante de matriz}
-Determinante <- det(MoveNL_Total)
+```{r}
+# Definición del Vector de Costos Unitarios (como son constantes no es necesario crear variables para cada costo)
+VectorCostos <- matrix(c(8, 5, 20, 25, 12), 
+                       nrow = 5, ncol = 1,
+                       dimnames = list(nombres_planes, "Costo ($)"))
+
+VectorCostos
+```
+
+
+```{r}
+# Vector de Utilidad Unitaria (Precio - Costo)
+VectorUtilidad <- VectorPrecios - VectorCostos
+colnames(VectorUtilidad) <- "Utilidad ($)"
+
+VectorUtilidad
+```
+
+```{r}
+UtilidadPorMunicipio <- MatrizOriginal %*% VectorUtilidad
+colnames(UtilidadPorMunicipio) <- "Utilidad Total ($)"
+
+UtilidadPorMunicipio
+
+# Utilidad de todo el estado (Suma total de todas las utilidades de los municipios)
+UtilidadTotal <- sum(UtilidadPorMunicipio)
+
+UtilidadTotal
 
 ```
+
+#### _**4.5 Empresa Lime**_
+
+```{r}
+# A %*% X = B
+# Ecuación 1 (Unidades vendidas):   1*X +     1*Y +     1*Z = 120,000
+# Ecuación 2 (Ingresos/Ventas):   200*X +   350*Y +   600*Z = 48,500,000
+# Ecuación 3 (Costos Totales):     80*X +   120*Y +   250*Z = 18,200,000
+
+# Matriz de Coeficientes (A)
+MatrizA_Lime <- matrix(c(
+  1,   1,   1,    # Coeficientes de unidades
+  200, 350, 600,  # Coeficientes de precios de venta
+  80,  120, 250   # Coeficientes de costos de producción
+), nrow = 3, ncol = 3, byrow = TRUE)
+
+colnames(MatrizA_Lime) <- c("Lite", "Standard", "Pro")
+rownames(MatrizA_Lime) <- c("Unidades", "Ventas", "Costos")
+
+MatrizA_Lime
+```
+
+
+```{r}
+VectorB_Lime <- matrix(c(120000, 48500000, 18200000), nrow = 3, ncol = 1)
+rownames(VectorB_Lime) <- c("Total Unidades", "Ventas Totales ($)", "Costos Totales ($)")
+
+VectorB_Lime
+```
+
+
+```{r}
+# X = A^-1 %*% B
+InversaA_Lime <- solve(MatrizA_Lime)
+XUnidades <- solve(MatrizA_Lime, VectorB_Lime)
+XUnidades_Fracciones <- fractions(XUnidades)
+colnames(XUnidades) <- "Unidades Vendidas"
+rownames(XUnidades) <- c("Lite", "Standard", "Pro")
+
+XUnidades_Fracciones
+```
+
+
 
 # **Problema 2: Rendimiento Deportivo**
 
@@ -260,3 +372,113 @@ print(coeficientes)
 
 $$Rendimiento = -22.0238 - 0.436X1 + 1.599X2 + 0.088X3 - 0.420X4$$
 Aquí va lo que esperamos que ahorita te lo paso
+
+
+# **Problema 3: Markov**
+
+La matriz asignada por el profesor será modificada, debido a que se encontraron algunos errores en los datos proporcionados, ya que algunas columnas sumaban más del 100%.
+
+Por lo tanto, se decidio hacer cambios en algunos valores para que concordara con una matriz de Markov, quedando el problema de la siguiente manera:
+
+- Una persona en "Residentes en NL" tiene 80% de probabilidad de permanecer, 10% de pasar
+a "Residentes en CDMX" y 10% de pasar a "Residentes en otro estado".
+- Una persona en "Residentes en CDMX" tiene 10% de pasar a "Residentes en NL", 75% de
+permanecer y 15% de pasar a "Residentes en otro estado".
+- Una persona en "Residentes en otro estado" tiene 10% de pasar a "Residentes en NL", 15%
+de pasar a "Residentes en CDMX" y 75% de permanecer.
+
+## Matriz de Markov
+
+```{r}
+NL <- c(.80,.10,.10)
+CDMX <- c(.10,.75,.15)
+Otros <- c(.10,.15,.75)
+MatrizMarkov <- matrix(c(NL,CDMX,Otros),
+                       nrow = 3,
+                       byrow = TRUE)
+
+nombres_Residentes <- c("Residentes NL", "Residentes CDMX", "Residentes Otro")
+colnames(MatrizMarkov) <- nombres_Residentes
+rownames(MatrizMarkov) <- nombres_Residentes
+MatrizMarkov
+```
+
+Representa el sistema en su forma matricial X = A·X ₁, donde X es el vector de ₜ ₜ₋ ₜ
+población por grupo y A la matriz de probabilidades de transición.
+```{r, echo=FALSE, results='asis'}
+# 2. Convertimos las filas de la matriz A a formato LaTeX (separadas por & y \\)
+filas_MatrizMarkov <- apply(MatrizMarkov, 1, paste, collapse = " & ")
+cuerpo_MatrizMarkov <- paste(filas_MatrizMarkov, collapse = " \\\\ ")
+
+# 3. Imprimimos el sistema completo usando la sintaxis nativa de R Markdown
+cat("$$")
+cat("\\begin{bmatrix} NL_{\\ t} \\\\ CDMX_{\\ t} \\\\ Otros_{\\ t} \\end{bmatrix} = ")
+cat("\\begin{bmatrix} ", cuerpo_MatrizMarkov, " \\end{bmatrix} ")
+cat("\\begin{bmatrix} NL_{\\ t-1} \\\\ CDMX_{\\ t-1} \\\\ Otros_{\\ t-1} \\end{bmatrix}")
+cat("$$")
+```
+
+
+## EigenValores y EigenVectores
+
+```{r}
+MatrizEigen <- eigen(MatrizMarkov)
+```
+
+Aqui estan los eigenvalores
+```{r, echo=FALSE}
+EigenValores <- MatrizEigen$values
+
+EigenValores
+```
+
+Aqui estan los eigen vectores
+```{r, echo=FALSE}
+EigenVectores <- MatrizEigen$vectors
+
+EigenVectores
+```
+
+## Solucion General del Sistema
+
+Con los eigenvalores y eigenvectores dados, podemos plantear la solución general del sistema dinámico. 
+
+### 1. Fórmula General Teórica
+La estructura algebraica para cualquier periodo $t$ se define como:
+$$X_t = c_1(\lambda_1)^t v_1 + c_2(\lambda_2)^t v_2 + c_3(\lambda_3)^t v_3$$
+### 2. Sustitución de Valores del Sistema
+Calculando las constantes $c_n$ basadas en la población inicial $X_0 = [33, 33, 33]^T$ y sustituyendo los eigenvalores y eigenvectores obtenidos, el sistema se representa de la siguiente manera:
+
+```{r Solución General Automatizada, echo=FALSE, results='asis'}
+# 1. Definir población inicial para calcular las constantes 'c'
+x_0 <- c(33, 33, 33)
+
+# 2. Extraer los componentes reales (limpios)
+lam <- Re(MatrizEigen$values)
+E_Vectores <- Re(MatrizEigen$vectors)
+
+# 3. Resolver V * C = X0 para hallar c1, c2, c3
+C <- solve(E_Vectores, x_0)
+
+# Redondear los valores a 4 decimales para que queden estéticos en LaTeX
+lam <- round(lam, 4)
+V <- round(E_Vectores, 4)
+C <- round(C, 4)
+
+# 4. Construir la ecuación con valores incrustados en LaTeX
+cat("$$")
+cat("\\begin{bmatrix} NL_t \\\\ CDMX_t \\\\ Otros_t \\end{bmatrix} = ")
+
+# Término 1 (c1 * lambda1^t * v1)
+cat(C[1], "\\cdot (", lam[1], ")^t \\begin{bmatrix} ", V[1,1], " \\\\ ", V[2,1], " \\\\ ", V[3,1], " \\end{bmatrix} + ")
+
+# Término 2 (c2 * lambda2^t * v2)
+cat(C[2], "\\cdot (", lam[2], ")^t \\begin{bmatrix} ", V[1,2], " \\\\ ", V[2,2], " \\\\ ", V[3,2], " \\end{bmatrix} + ")
+
+# Término 3 (c3 * lambda3^t * v3)
+cat(C[3], "\\cdot (", lam[3], ")^t \\begin{bmatrix} ", V[1,3], " \\\\ ", V[2,3], " \\\\ ", V[3,3], " \\end{bmatrix}")
+cat("$$")
+
+```
+
+
