@@ -1,0 +1,193 @@
+---
+title: "Untitled"
+author: "Edson Maldonaod"
+date: "2026-05-15"
+output: html_document
+---
+```{r setup, include=FALSE}
+Basededatos = read.csv("datos.csv")
+``` 
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# 1 Transformar a formato "Numeros" (Matriz)
+# Seleccionar columnas 2 a la 6
+
+```{r setup, include=FALSE}
+Numeros <- as.matrix(Basededatos[, 2:6])
+```
+
+# Asignar municipios a la filas
+
+```{r setup, include=FALSE}
+rownames(Numeros) = Basededatos[[1]]
+```
+ 
+ 
+# 2 Matriz Original
+
+# Matriz quitando municipio
+
+```{r setup, include=FALSE}
+Matriz = as.matrix(Basededatos[, 1])
+```
+
+# Renombrar columnas
+
+```{r setup, include=FALSE}
+colnames(Basededatos) =`("Bicicleta publica", "Patinete electrico", "Autobus BRT", "Metro Express", "Taxi Compartido")
+```
+
+
+# 3 Disminucion en la demanda
+
+```{r setup, include=FALSE}
+Disminucion = .72
+Demanda_Disminuida = Numeros*.72
+```
+
+# 4 Producciones nuevas
+
+# Produccion Adquirida de MoviRival
+
+```{r setup, include=FALSE}
+Pruduccion_Adquirida = .25
+Adquisicion_MoviRival = Numeros*.25
+```
+
+# Produccion Nueva de MoveNL
+
+```{r setup, include=FALSE}
+Producion_Nueva = print(Numeros + Adquisicion_MoviRival)
+```
+
+# 5 Determinante de la Produccion Nueva 
+```{r setup, include=FALSE}
+det(Producion_Nueva)
+```
+
+# 6 Determinande de la traspuesta de la funcion nueva
+
+# Matematicamente el determinante de la traspuesta es igual al determinante de la matriz normal
+
+# Demomstramos esta propiedad
+```{r setup, include=FALSE}
+Traspuesta_Produccion <- t(Producion_Nueva)
+
+```{r setup, include=FALSE}
+det(Traspuesta_Produccion)
+```
+
+#Son exactamente iguales
+
+# 7 Inversa de la Produccion
+
+# Construimos la matriz de la "Produccion_nueva" a partir de la adquisicion de produccion de MoviRival
+
+# se comprobo que la matriz a partir de su determinante debido a que no debia de ser igual a cero  
+```{r setup, include=FALSE}
+det(Producion_Nueva)
+```
+# Apartir de aqui realizamos la inversa de la produccion nueva
+```{r setup, include=FALSE}
+Inversa <- solve(Producion_Nueva)
+```
+
+# Para comprobar que esta matriz si sea la inversa de la produccion nueva se deberia multiplicar por la matriz normal y deberia dar la identidad
+
+```{r setup, include=FALSE}
+print( Producion_Nueva %*% Inversa)
+```
+
+# 8 Precios de los planes
+ 
+# Generamos un vector columna
+```{r setup, include=FALSE}
+Precios <- matrix(c(50, 100, 150, 180, 130))
+rownames(Precios) <- c("Bicicleta publica", "Patinete electrico", "Autobus BRT", "Metro Express", "Taxi Compartido")
+```
+
+# 9 Utilidad Total de la empresa MoveNL
+# Primero calculamos los ingresos totales
+
+```{r setup, include=FALSE}
+IngresosTotales = (Producion_Nueva %*% Precios)
+```
+
+# Despues calculamos costos totales
+
+# Tomamos los costos por unidad
+```{r setup, include=FALSE}
+Costos <- matrix(c(8, 5, 20, 25, 12))
+rownames(Costos) <- c("Bicicleta publica", "Patinete electrico", "Autobus BRT", "Metro Express", "Taxi Compartido")
+```
+
+```{r setup, include=FALSE}
+CostosTotales = (Producion_Nueva %*% Costos)
+```
+
+# Calculamos la utilidad de cada plan
+
+```{r setup, include=FALSE}
+Utilidad_Porplan = (IngresosTotales - CostosTotales)
+```
+
+# Por ultimo sacamos la utilidad de toda la empresa MoveNL
+
+```{r setup, include=FALSE}
+sum(Utilidad_Porplan)
+```
+
+#10 Ecuaciones de ventas de patinetes
+
+# Variables
+
+# x <- Lite
+# y <- Standard 
+# z <- Pro
+
+# Matrices de coeficientes
+
+```{r setup, include=FALSE}
+A <- matrix(c(1, 1, 1, 
+              200, 350, 600, 
+              80, 120, 250), nrow = 3, byrow = TRUE)
+``` 
+
+# Vector de unidades vendidad, ingresos y costos
+
+# Vector de resultados
+
+```{r setup, include=FALSE}
+B <- c(120000, 48500000, 18200000)
+```
+
+# Resolucion de ecuaciones
+
+```{r setup, include=FALSE}
+solucion <- solve(A, B)
+```
+
+# Resultados
+
+```{r setup, include=FALSE}
+x <- solucion[1]
+y <- solucion[2]
+z <- solucion[3]
+```
+
+# Interpretacion 
+# Para cumplir con los costos e ingresos establecidos por la produccion y venta se indica que se deben producir  11053 unidades de patinetes lite, 76316 unidades de los patinetes standar y 32632 unidades de patinetes pro 
+
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+
+
+
