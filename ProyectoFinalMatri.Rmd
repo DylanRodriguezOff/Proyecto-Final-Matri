@@ -66,13 +66,16 @@ Hay que poner elobjetivo general del proyecto aqui, que librerias, recursos, ét
 
 ***
 # **Problema 1: MoveNL**
+<!-- ----------------------------------------------------------------------------------->
 
 <!-- Palabras despues de dos o más almohadillas (#) tendran formato de sub-header (h2) o posterior (h3, h4, ...) -->
 ## 1. **Contexto**
 Descripcion del problema, como contexto de la empresa y que significa la base de datos y que tipo analisis se realizara-_-
+<!-- ----------------------------------------------------------------------------------->
 
 ## 2. **Objetivo Especifico**
 Que se analizara a detalle y que se busca evaluar
+<!-- ----------------------------------------------------------------------------------->
 
 ## 3. **Preparacion de los Datos**
 
@@ -85,6 +88,7 @@ Paso 1. Importar la base de datos de la demanda de MoveNL (formato Data Frame)
 dataframe <- read.csv("datos_problema1_PF26.csv") 
 
 ```
+
 Paso 2. Convertir la base de datos de formato Data Frame a formato Números (Matriz)
 
 <!-- Bloque R para convertir la base de datos de formato data frame a formatu números -->
@@ -107,7 +111,6 @@ colnames(MatrizOriginal) <- nombres_planes
 print(MatrizOriginal)
 ```
 
-
 <!-- Bloque R para mostrar la matriz en forma de tabla de datos -->
 ```{r Presentar la Matriz Original}
 
@@ -116,9 +119,10 @@ knitr::kable(MatrizOriginal,
              caption = "Tabla 1. Matriz de Datos Original de Demanda: MoveNL", # Caption para agregar titulos o descripcones de tablas y figuras 
              align = "cccccc") # align para centrar los valores en sus columans (c = center) y son 6 columnas
 ```
+<!-- ----------------------------------------------------------------------------------->
 
 ## 4. **Analisis de Escenarios de Demanda**
-### _**4.1 Escenario de Disminucion de Demanda**_
+#### _**4.1 Escenario de Disminucion de Demanda**_
 Esta proyección de demanda contempla factores externos de competencia. Debido a la entrada de nuevas empresas al mercado, se ha identificado una probabilidad de reducción del 28% en la demanda general.
 
 Para reflejar este cambio, se genera primero un _**escalar de ajuste**_ que represente el cambio de la demanda:
@@ -320,24 +324,27 @@ rownames(XUnidades) <- c("Lite", "Standard", "Pro")
 
 XUnidades_Fracciones
 ```
-
-
+<!-- ----------------------------------------------------------------------------------->
+***
 
 # **Problema 2: Rendimiento Deportivo**
+<!-- ----------------------------------------------------------------------------------->
 
 ## 1. **Contexto**
 
 Se busca analizar la relación de factores que afectan al rendimiento de los pilotos en la Fórmula 1, durante la carrera GNP en el Autodómo Hermanos Rodríguez, en la CDMX, contemplando factores climáticos y dificultad del circuito.
+<!-- ----------------------------------------------------------------------------------->
 
 ## 2. **Objetivo Específico**
 
 Comprender la relación de cada uno de los factores tales que entrenamiento, experiencia, entre otros; factores que potencien o disminuyan el rendimiento de los pilotos durante la competencia. 
+<!-- ----------------------------------------------------------------------------------->
 
 ## 3. **Preparación de los datos**
 
 Paso 1. Importar la base de datos generada por Gemini. Breve descripción de las características de los datos y de la base
 
-```{r}
+```{r Importacion de Base de Datos}
 # Importar la base de datos en formato .csv con la función read.csv
 Rendimiento <- read.csv("datos_problema2_PF26.csv")
 
@@ -347,43 +354,49 @@ ncol(Rendimiento)
 sum(is.na(Rendimiento))
 head(Rendimiento)
 ```
+<!-- ----------------------------------------------------------------------------------->
 
 ## 4. **Definición de Variables**
 Definir porque las variables que escogimos son consideradas para el modelo de regresión lineal y su relación con el rendimiento (aquí va la tablita con las variables)
+<!-- ----------------------------------------------------------------------------------->
 
-## 5. Modelo de Regresión Lineal
+## 5. **Modelo de Regresión Lineal**
 
 Paso 1. Previamente definidas las variables, podremos crear el modelo de regresión lineal.
  
-```{r}
+```{r Modelo de Regresion Lineal}
 # Para generar el Modelo de Regresión Lineal utilizamos la función lm() especificando las variables que analizaremos.
 modelolm <- lm(rendimiento_competencia ~ experiencia + entrenamiento + peso_monoplaza + degradacion_neumaticos, Rendimiento)
 
-# La función summary() nos será útil para observar los resultados del modelo
+# La función summary() sirve para observar los resultados del modelo
 summary(modelolm)
 ```
 
 Paso 2. Definir los coeficientes que determinan las relaciones.
 
-```{r}
+```{r Coeficientes}
 coeficientes <- coef(modelolm)
-
-print(coeficientes)
 ```
+
+```{r Mostrar Coeficientes, echo=FALSE}
+coeficientes
+```
+<!-- ----------------------------------------------------------------------------------->
 
 ## 6. **Ecuación del modelo**
 
 $$Rendimiento = -22.0238 - 0.436X1 + 1.599X2 + 0.088X3 - 0.420X4$$
+
 Aquí va lo que esperamos que ahorita te lo paso
+<!-- ----------------------------------------------------------------------------------->
 
-## 7. Análisis y gráficas de las variables
+## 7. **Análisis y gráficas de las variables**
 
-### _**7.1.- Gráfica: Rendimiento por degradación de neumáticos**_ ### 
+#### _**7.1 Gráfica: Rendimiento por degradación de neumáticos**_
 
 Consideramos que la variable de mayor importancia para el rendimiento de los pilotos dentro de la competencia es la degradación de los neumáticos, y en general, aquellas variables relacionadas con el vehículo. La degradación de los neumáticos es fundamental para el monoplaza y el piloto ya que una alta degradación imposibilita al piloto a manejar de una forma óptima y que pueda utilizar todos sus recursos técnicos, habilidades y destreza motriz.
 
-
-```{r}
+```{r Grafica 1, echo=FALSE}
 # Gráfica degradación-rendimiento_competencia
 ggplot(Rendimiento, aes(x=degradacion_neumaticos, y=rendimiento_competencia)) +
   # Para los puntos: puntos azules, con cierta transparencia
@@ -400,8 +413,11 @@ ggplot(Rendimiento, aes(x=degradacion_neumaticos, y=rendimiento_competencia)) +
   
 ```
 
-### _**7.2.- Gráfica: Rendimiento por entrenamiento semanal**_ ###
-```{r}
+#### _**7.2 Gráfica: Rendimiento por entrenamiento semanal**_
+
+Aqui tambien hay que poner alguna justificacion o algo xd
+
+```{r Grafica 2, echo=FALSE}
 # Gráfica entrenamiento-rendimiento_competencia
 ggplot(Rendimiento, aes(x=entrenamiento, y=rendimiento_competencia)) +
   # Para los puntos: puntos azules, con cierta transparencia
@@ -416,10 +432,23 @@ ggplot(Rendimiento, aes(x=entrenamiento, y=rendimiento_competencia)) +
     y = "Puntaje de Rendimiento",
     caption = "Fuente: Base de datos generada por Gemini")
 ```
+<!-- ----------------------------------------------------------------------------------->
 
+## 8. **Caso Practico**
 
+Aqui va el caso practico:P
+<!-- ----------------------------------------------------------------------------------->
+
+## 9. **Reflexion Final**
+
+Reflexionar algo chido pa Favita
+<!-- ----------------------------------------------------------------------------------->
+***
 
 # **Problema 3: Markov**
+<!-- ----------------------------------------------------------------------------------->
+
+## 1. **Contexto**
 
 La matriz asignada por el profesor será modificada, debido a que se encontraron algunos errores en los datos proporcionados, ya que algunas columnas sumaban más del 100%.
 
@@ -431,10 +460,17 @@ a "Residentes en CDMX" y 10% de pasar a "Residentes en otro estado".
 permanecer y 15% de pasar a "Residentes en otro estado".
 - Una persona en "Residentes en otro estado" tiene 10% de pasar a "Residentes en NL", 15%
 de pasar a "Residentes en CDMX" y 75% de permanecer.
+<!-- ----------------------------------------------------------------------------------->
 
-## Matriz de Markov
+## 2. **Objetivo Especifico**
 
-```{r}
+Aqui hay que poner algo tambien xd
+<!-- ----------------------------------------------------------------------------------->
+
+## 3. **Preparacion de Datos**
+
+#### _**3.1 Matriz de Markov**_
+```{r Creacion de Matriz de Markov}
 NL <- c(.80,.10,.10)
 CDMX <- c(.10,.75,.15)
 Otros <- c(.10,.15,.75)
@@ -450,7 +486,8 @@ MatrizMarkov
 
 Representa el sistema en su forma matricial X = A·X ₁, donde X es el vector de ₜ ₜ₋ ₜ
 población por grupo y A la matriz de probabilidades de transición.
-```{r, echo=FALSE, results='asis'}
+
+```{r Matriz Visual, echo=FALSE, results='asis'}
 # 2. Convertimos las filas de la matriz A a formato LaTeX (separadas por & y \\)
 filas_MatrizMarkov <- apply(MatrizMarkov, 1, paste, collapse = " & ")
 cuerpo_MatrizMarkov <- paste(filas_MatrizMarkov, collapse = " \\\\ ")
@@ -464,37 +501,39 @@ cat("$$")
 ```
 
 
-## EigenValores y EigenVectores
+#### _**3.2 EigenValores y EigenVectores**_
 
-```{r}
+```{r Calculo de Eigen}
 MatrizEigen <- eigen(MatrizMarkov)
 ```
 
 Aqui estan los eigenvalores
-```{r, echo=FALSE}
+```{r Mostrar solo EigenValores de la matriz}
 EigenValores <- MatrizEigen$values
+```
 
-EigenValores
+
+```{r Mostrar solo EigenValores, echo=FALSE}
+cat("Los valores son:", EigenValores)
 ```
 
 Aqui estan los eigen vectores
-```{r, echo=FALSE}
+```{r Mostrar solo EigenVectores de la matriz}
 EigenVectores <- MatrizEigen$vectors
 
 EigenVectores
 ```
 
-## Solucion General del Sistema
+#### _**3.3 Solucion General del Sistema**_
 
 Con los eigenvalores y eigenvectores dados, podemos plantear la solución general del sistema dinámico. 
 
-### 1. Fórmula General Teórica
 La estructura algebraica para cualquier periodo $t$ se define como:
 $$X_t = c_1(\lambda_1)^t v_1 + c_2(\lambda_2)^t v_2 + c_3(\lambda_3)^t v_3$$
-### 2. Sustitución de Valores del Sistema
+
 Calculando las constantes $c_n$ basadas en la población inicial $X_0 = [33, 33, 33]^T$ y sustituyendo los eigenvalores y eigenvectores obtenidos, el sistema se representa de la siguiente manera:
 
-```{r Solución General Automatizada, echo=FALSE, results='asis'}
+```{r Solución General, echo=FALSE, results='asis'}
 # 1. Definir población inicial para calcular las constantes 'c'
 x_0 <- c(33, 33, 33)
 
@@ -525,5 +564,88 @@ cat(C[3], "\\cdot (", lam[3], ")^t \\begin{bmatrix} ", V[1,3], " \\\\ ", V[2,3],
 cat("$$")
 
 ```
+<!-- ----------------------------------------------------------------------------------->
 
+## 4. **Solucion de Casos**
 
+A continuación, se evalúa el comportamiento del sistema tras 3 periodos de tiempo ($t = 3$) bajo cuatro escenarios demográficos iniciales diferentes. Las proyecciones se realizan mediante la ecuación recursiva $X_3 = A^3 \cdot X_0$
+
+#### _**4.1 Primer Caso**_
+
+Para una población inicial simétrica, la distribución en el periodo $t = 3$ es:
+
+```{r Inciso 5, echo=FALSE, results='asis'}
+# Población inicial
+X0_5 <- c(33, 33, 33)
+
+# Multiplicación matricial iterativa para t=3
+X3_5 <- MatrizMarkov %*% MatrizMarkov %*% MatrizMarkov %*% X0_5
+
+# Formatear el resultado para mostrarlo de forma elegante
+cat("$$")
+cat("\\begin{bmatrix} NL_3 \\\\ CDMX_3 \\\\ Otros_3 \\end{bmatrix} = ")
+cat("\\left( \\mathbf{MatrizMarkov} \\right)^3 \\begin{bmatrix} 33 \\\\ 33 \\\\ 33 \\end{bmatrix} = ")
+cat("\\begin{bmatrix} ", round(X3_5[1], 2), " \\\\ ", round(X3_5[2], 2), " \\\\ ", round(X3_5[3], 2), " \\end{bmatrix}")
+cat("$$")
+```
+
+#### _**4.2 Segundo Caso**_
+
+Si el 100% de la población comienza en el estado de Nuevo León, tras 3 periodos la distribución se modifica a:
+
+```{r Inciso 6, echo=FALSE, results='asis'}
+# Población inicial
+X0_6 <- c(100, 0, 0)
+
+# Proyección t=3
+X3_6 <- MatrizMarkov %*% MatrizMarkov %*% MatrizMarkov %*% X0_6
+
+cat("$$")
+cat("\\begin{bmatrix} NL_3 \\\\ CDMX_3 \\\\ Otros_3 \\end{bmatrix} = ")
+cat("\\left( \\mathbf{MatrizMarkov} \\right)^3 \\begin{bmatrix} 100 \\\\ 0 \\\\ 0 \\end{bmatrix} = ")
+cat("\\begin{bmatrix} ", round(X3_6[1], 2), " \\\\ ", round(X3_6[2], 2), " \\\\ ", round(X3_6[3], 2), " \\end{bmatrix}")
+cat("$$")
+```
+
+#### _**4.3 Tercer Caso**_
+
+Si el 100% de la población comienza en la CDMX, tras 3 periodos la distribución se modifica a:
+
+```{r Inciso 7, echo=FALSE, results='asis'}
+# Población inicial
+X0_7 <- c(0, 100, 0)
+
+# Proyección t=3
+X3_7 <- MatrizMarkov %*% MatrizMarkov %*% MatrizMarkov %*% X0_7
+
+cat("$$")
+cat("\\begin{bmatrix} NL_3 \\\\ CDMX_3 \\\\ Otros_3 \\end{bmatrix} = ")
+cat("\\left( \\mathbf{MatrizMarkov} \\right)^3 \\begin{bmatrix} 0 \\\\ 100 \\\\ 0 \\end{bmatrix} = ")
+cat("\\begin{bmatrix} ", round(X3_7[1], 2), " \\\\ ", round(X3_7[2], 2), " \\\\ ", round(X3_7[3], 2), " \\end{bmatrix}")
+cat("$$")
+```
+
+#### _**4.4 Cuarto Caso**_
+
+Si el 100% de la población comienza en otro estado, tras 3 periodos la distribución se modifica a:
+
+```{r Inciso 8, echo=FALSE, results='asis'}
+# Población inicial
+X0_8 <- c(0, 0, 100)
+
+# Proyección t=3
+X3_8 <- MatrizMarkov %*% MatrizMarkov %*% MatrizMarkov %*% X0_8
+
+cat("$$")
+cat("\\begin{bmatrix} NL_3 \\\\ CDMX_3 \\\\ Otros_3 \\end{bmatrix} = ")
+cat("\\left( \\mathbf{MatrizMarkov} \\right)^3 \\begin{bmatrix} 0 \\\\ 0 \\\\ 100 \\end{bmatrix} = ")
+cat("\\begin{bmatrix} ", round(X3_8[1], 2), " \\\\ ", round(X3_8[2], 2), " \\\\ ", round(X3_8[3], 2), " \\end{bmatrix}")
+cat("$$")
+```
+<!-- ----------------------------------------------------------------------------------->
+
+## 5. **Conclusion**
+
+Concluir algo aqui xd
+<!-- ----------------------------------------------------------------------------------->
+***
